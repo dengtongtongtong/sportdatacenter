@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/astaxie/beego"
+	// "github.com/astaxie/beego/httplib"
 )
 
 // WalkdataController operations for Walkdata
@@ -32,11 +34,25 @@ func (c *WalkdataController) Post() {
 // GetOne ...
 // @Title GetOne
 // @Description get Walkdata by id
-// @Param	id		path 	string	true		"The key for staticblock"
+// @Param	uid		path 	string	true		"The key for staticblock"
 // @Success 200 {object} models.Walkdata
-// @Failure 403 :id is empty
-// @router /:id [get]
+// @Failure 403 :uid is empty
+// @router /:uid [get]
 func (c *WalkdataController) GetOne() {
+	uid := c.GetString(":uid")
+	fmt.Println(uid)
+	c.Data["json"] = map[string]string{"name": "dengtongtong"}
+	c.ServeJSON()
+}
+
+// GetBatch ...
+// @Title GetBatchData
+// @Description get Walkdata by uid
+// @Param	uid		path 	string	true		"The key for staticblock"
+// @Success 200 {object} models.Walkdata
+// @Failure 403 :uid is empty
+// @router /:uid [get]
+func (c *WalkdataController) GetBatchData() {
 
 }
 

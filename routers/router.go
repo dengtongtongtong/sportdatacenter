@@ -27,7 +27,7 @@ func init() {
 		),
 		beego.NSNamespace("/walkdata",
 			beego.NSInclude(
-				&controllers.UserController{},
+				&controllers.WalkdataController{},
 			),
 		),
 	)
