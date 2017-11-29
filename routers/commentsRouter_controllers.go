@@ -138,7 +138,7 @@ func init() {
 	beego.GlobalControllerRouter["sportdatacenter/controllers:WalkdataController"] = append(beego.GlobalControllerRouter["sportdatacenter/controllers:WalkdataController"],
 		beego.ControllerComments{
 			Method: "GetOne",
-			Router: `/:uid`,
+			Router: `/:uid/:date`,
 			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})
@@ -146,7 +146,7 @@ func init() {
 	beego.GlobalControllerRouter["sportdatacenter/controllers:WalkdataController"] = append(beego.GlobalControllerRouter["sportdatacenter/controllers:WalkdataController"],
 		beego.ControllerComments{
 			Method: "GetBatchData",
-			Router: `/:uid`,
+			Router: `/:uid/:startdate/:enddate`,
 			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})

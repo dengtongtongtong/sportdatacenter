@@ -3,8 +3,9 @@ package models
 import (
 	// "errors"
 	// "fmt"
-	"github.com/aliyun/aliyun-tablestore-go-sdk/tablestore"
 	"os"
+
+	"github.com/aliyun/aliyun-tablestore-go-sdk/tablestore"
 	// "reflect"
 	// "strings"
 	// "common/timeutils"
@@ -74,7 +75,7 @@ func addWalkdataWithGeneralTS(m *Walkdata) {
 	putRowChange.AddColumn(COLTIMESTAMP, m.Timestamp)
 	putRowChange.SetCondition(tablestore.RowExistenceExpectation_IGNORE)
 	putRowRequest.PutRowChange = putRowChange
-	_, _= tsclient.PutRow(putRowRequest)
+	_, _ = tsclient.PutRow(putRowRequest)
 	return
 }
 
@@ -83,20 +84,40 @@ func addWalkdataWithGeneralTS(m *Walkdata) {
 func AddWalkdata(m *Walkdata) (id int64, err error) {
 	// o := orm.NewOrm()
 	// id, err = o.Insert(m)
+	addWalkdataWithGeneralTS(m)
 	return
 }
 
-// // GetWalkdataById retrieves Walkdata by aliuid. Returns error if
-// // Id doesn't exist
-// func GetWalkdataById(aliuid int64) (v *Walkdata, err error) {
-// 	// o := orm.NewOrm()
-// 	// v = &Walkdata{Id: id}
+// GetWalkdataById retrieves Walkdata by aliuid. Returns error if
+// Id doesn't exist
+func GetWalkdataByUId(aliuid string, datestamp int64) (v *Walkdata, err error) {
+	// o := orm.NewOrm()
+	// v = &Walkdata{Id: id}
 
-// 	if err = o.QueryTable(new(Walkdata)).Filter("Id", id).RelatedSel().One(v); err == nil {
-// 		return v, nil
-// 	}
-// 	return nil, err
-// }
+	// if err = o.QueryTable(new(Walkdata)).Filter("Id", id).RelatedSel().One(v); err == nil {
+	// 	return v, nil
+	// }
+	getRowRequest := new(tablestore.GetRowRequest)
+	criteria := new(tablestore.SingleRowQueryCriteria)
+	putPk := new(tablestore.PrimaryKey)
+	putPk.AddPrimaryKeyColumn(PKALIUID, aliuid)
+	putPk.AddPrimaryKeyColumn(PKDATESTAMP, datestamp)
+	criteria.PrimaryKey = putPk
+	getRowRequest.SingleRowQueryCriteria = criteria
+	getRowRequest.SingleRowQueryCriteria.TableName = walkDataTableName
+	getRowRequest.SingleRowQueryCriteria.MaxVersion = 1
+
+	getResp, _ := tsclient.GetRow(getRowRequest)
+	colmap := getResp.GetColumnMap()
+	step, _ := colmap.Columns[COLSTEP][0].Value.(float64)
+	energy, _ := colmap.Columns[COLENERGY][0].Value.(float64)
+	distance, _ := colmap.Columns[COLDISTANCE][0].Value.(float64)
+	v.Step = step
+	v.Energy = energy
+	v.Distance = distance
+
+	return nil, err
+}
 
 // // GetAllWalkdata retrieves all Walkdata matches certain condition. Returns empty list if
 // // no records exist

@@ -1,7 +1,10 @@
 package controllers
 
 import (
-	"fmt"
+	"encoding/json"
+	"sportdatacenter/models"
+	"strconv"
+
 	"github.com/astaxie/beego"
 	// "github.com/astaxie/beego/httplib"
 )
@@ -28,7 +31,9 @@ func (c *WalkdataController) URLMapping() {
 // @Failure 403 body is empty
 // @router / [post]
 func (c *WalkdataController) Post() {
-
+	var walkdata models.Walkdata
+	json.Unmarshal(c.Ctx.Input.RequestBody, &walkdata)
+	c.ServeJSON()
 }
 
 // GetOne ...
@@ -37,11 +42,13 @@ func (c *WalkdataController) Post() {
 // @Param	uid		path 	string	true		"The key for staticblock"
 // @Success 200 {object} models.Walkdata
 // @Failure 403 :uid is empty
-// @router /:uid [get]
+// @router /:uid/:date [get]
 func (c *WalkdataController) GetOne() {
 	uid := c.GetString(":uid")
-	fmt.Println(uid)
+	date, _ := strconv.ParseInt(c.GetString(":date"), 10, 64)
 	c.Data["json"] = map[string]string{"name": "dengtongtong"}
+	walkdate, err := models.GetWalkdataByUId(uid, date)
+	c.Data["json"]
 	c.ServeJSON()
 }
 
@@ -51,7 +58,7 @@ func (c *WalkdataController) GetOne() {
 // @Param	uid		path 	string	true		"The key for staticblock"
 // @Success 200 {object} models.Walkdata
 // @Failure 403 :uid is empty
-// @router /:uid [get]
+// @router /:uid/:startdate/:enddate [get]
 func (c *WalkdataController) GetBatchData() {
 
 }
