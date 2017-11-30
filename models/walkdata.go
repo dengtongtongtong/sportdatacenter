@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	// "errors"
 	// "fmt"
 	"os"
@@ -47,7 +48,7 @@ func init() {
 	tsclient = tablestore.NewClient(endpoint, instanceName, accessKeyId, accessKeySecret)
 }
 
-func addWalkdataWithGeneralTS(m *Walkdata) {
+func addWalkdataWithGeneralTS(m *Walkdata) (err error) {
 	getRowRequest := new(tablestore.GetRowRequest)
 	criteria := new(tablestore.SingleRowQueryCriteria)
 	putPk := new(tablestore.PrimaryKey)
@@ -60,9 +61,11 @@ func addWalkdataWithGeneralTS(m *Walkdata) {
 
 	getResp, _ := tsclient.GetRow(getRowRequest)
 	colmap := getResp.GetColumnMap()
-	step, _ := colmap.Columns[COLSTEP][0].Value.(float64)
-	if step >= m.Step {
-		return
+	if colmap != nil {
+		step, _ := colmap.Columns[COLSTEP][0].Value.(float64)
+		if step >= m.Step {
+			return
+		}
 	}
 	putRowRequest := new(tablestore.PutRowRequest)
 	putRowChange := new(tablestore.PutRowChange)
@@ -75,8 +78,10 @@ func addWalkdataWithGeneralTS(m *Walkdata) {
 	putRowChange.AddColumn(COLTIMESTAMP, m.Timestamp)
 	putRowChange.SetCondition(tablestore.RowExistenceExpectation_IGNORE)
 	putRowRequest.PutRowChange = putRowChange
-	_, _ = tsclient.PutRow(putRowRequest)
-	return
+	fmt.Println("goes here")
+	_, err = tsclient.PutRow(putRowRequest)
+	fmt.Println(err)
+	return err
 }
 
 // AddWalkdata insert a new Walkdata into database and returns
@@ -85,7 +90,8 @@ func AddWalkdata(m *Walkdata) (id int64, err error) {
 	// o := orm.NewOrm()
 	// id, err = o.Insert(m)
 	addWalkdataWithGeneralTS(m)
-	return
+	id, err = 0, nil
+	return id, err
 }
 
 func getWalkdataByUIdWithGeneralTS(aliuid string, datestamp int64) (v *Walkdata, err error) {

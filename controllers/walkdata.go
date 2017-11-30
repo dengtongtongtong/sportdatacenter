@@ -2,11 +2,11 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"sportdatacenter/models"
 	"strconv"
 
 	"github.com/astaxie/beego"
-	// "github.com/astaxie/beego/httplib"
 )
 
 // WalkdataController operations for Walkdata
@@ -31,8 +31,42 @@ func (c *WalkdataController) URLMapping() {
 // @Failure 403 body is empty
 // @router / [post]
 func (c *WalkdataController) Post() {
+	var err error
+	var step, energy, distance, duration float64
+	var timestamp int64
+	aliuid := c.GetString("aliuid")
+	step, err = c.GetFloat("step")
+	if err != nil {
+		fmt.Println(err)
+	}
+	energy, err = c.GetFloat("energy")
+	if err != nil {
+		fmt.Println(err)
+	}
+	distance, err = c.GetFloat("distance")
+	if err != nil {
+		fmt.Println(err)
+	}
+	duration, err = c.GetFloat("duration")
+	if err != nil {
+		fmt.Println(err)
+	}
+	timestamp, err = c.GetInt64("timestamp")
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(aliuid, step, energy, distance, duration, timestamp)
 	var walkdata models.Walkdata
-	json.Unmarshal(c.Ctx.Input.RequestBody, &walkdata)
+	walkdata.Aliuid = aliuid
+	walkdata.Step = step
+	walkdata.Energy = energy
+	walkdata.Distance = distance
+	walkdata.Duration = duration
+	walkdata.Timestamp = timestamp
+	_, err = models.AddWalkdata(&walkdata)
+	// fmt.Println("input request param", c.GetString("name"))
+	// data := map[string]string{"walkdata": "update"}
+	// c.Data["json"] = data
 	c.ServeJSON()
 }
 
