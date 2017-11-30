@@ -88,15 +88,7 @@ func AddWalkdata(m *Walkdata) (id int64, err error) {
 	return
 }
 
-// GetWalkdataById retrieves Walkdata by aliuid. Returns error if
-// Id doesn't exist
-func GetWalkdataByUId(aliuid string, datestamp int64) (v *Walkdata, err error) {
-	// o := orm.NewOrm()
-	// v = &Walkdata{Id: id}
-
-	// if err = o.QueryTable(new(Walkdata)).Filter("Id", id).RelatedSel().One(v); err == nil {
-	// 	return v, nil
-	// }
+func getWalkdataByUIdWithGeneralTS(aliuid string, datestamp int64) (v *Walkdata, err error) {
 	getRowRequest := new(tablestore.GetRowRequest)
 	criteria := new(tablestore.SingleRowQueryCriteria)
 	putPk := new(tablestore.PrimaryKey)
@@ -112,10 +104,26 @@ func GetWalkdataByUId(aliuid string, datestamp int64) (v *Walkdata, err error) {
 	step, _ := colmap.Columns[COLSTEP][0].Value.(float64)
 	energy, _ := colmap.Columns[COLENERGY][0].Value.(float64)
 	distance, _ := colmap.Columns[COLDISTANCE][0].Value.(float64)
+	duration, _ := colmap.Columns[COLDURATION][0].Value.(float64)
+	timestamp, _ := colmap.Columns[COLTIMESTAMP][0].Value.(int64)
 	v.Step = step
 	v.Energy = energy
 	v.Distance = distance
+	v.Duration = duration
+	v.Timestamp = timestamp
+	return v, nil
+}
 
+// GetWalkdataById retrieves Walkdata by aliuid. Returns error if
+// Id doesn't exist
+func GetWalkdataByUId(aliuid string, datestamp int64) (v *Walkdata, err error) {
+	// o := orm.NewOrm()
+	// v = &Walkdata{Id: id}
+
+	// if err = o.QueryTable(new(Walkdata)).Filter("Id", id).RelatedSel().One(v); err == nil {
+	// 	return v, nil
+	// }
+	v, err = getWalkdataByUIdWithGeneralTS(aliuid, datestamp)
 	return nil, err
 }
 

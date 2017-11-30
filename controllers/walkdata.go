@@ -47,8 +47,8 @@ func (c *WalkdataController) GetOne() {
 	uid := c.GetString(":uid")
 	date, _ := strconv.ParseInt(c.GetString(":date"), 10, 64)
 	c.Data["json"] = map[string]string{"name": "dengtongtong"}
-	walkdate, err := models.GetWalkdataByUId(uid, date)
-	c.Data["json"]
+	walkdata, _ := models.GetWalkdataByUId(uid, date)
+	c.Data["json"], _ = json.Marshal(walkdata)
 	c.ServeJSON()
 }
 
@@ -60,7 +60,7 @@ func (c *WalkdataController) GetOne() {
 // @Failure 403 :uid is empty
 // @router /:uid/:startdate/:enddate [get]
 func (c *WalkdataController) GetBatchData() {
-
+	// uid := c.GetString(":uid")
 }
 
 // GetAll ...
