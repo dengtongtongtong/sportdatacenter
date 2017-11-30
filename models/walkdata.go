@@ -62,9 +62,14 @@ func addWalkdataWithGeneralTS(m *Walkdata) (err error) {
 	getResp, _ := tsclient.GetRow(getRowRequest)
 	colmap := getResp.GetColumnMap()
 	if colmap != nil {
-		step, _ := colmap.Columns[COLSTEP][0].Value.(float64)
-		if step >= m.Step {
-			return
+		fmt.Println(colmap)
+		columstep, ok := colmap.Columns[COLSTEP]
+		if ok == true {
+			step, _ := columstep[0].Value.(float64)
+			if step >= m.Step {
+				fmt.Println("return cause step")
+				return nil
+			}
 		}
 	}
 	putRowRequest := new(tablestore.PutRowRequest)
@@ -78,9 +83,8 @@ func addWalkdataWithGeneralTS(m *Walkdata) (err error) {
 	putRowChange.AddColumn(COLTIMESTAMP, m.Timestamp)
 	putRowChange.SetCondition(tablestore.RowExistenceExpectation_IGNORE)
 	putRowRequest.PutRowChange = putRowChange
-	fmt.Println("goes here")
+	// todo:添加重试逻辑
 	_, err = tsclient.PutRow(putRowRequest)
-	fmt.Println(err)
 	return err
 }
 

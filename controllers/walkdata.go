@@ -14,6 +14,10 @@ type WalkdataController struct {
 	beego.Controller
 }
 
+func HttpSuccess(data *map[interface{}]interface{}) {
+	return
+}
+
 // URLMapping ...
 func (c *WalkdataController) URLMapping() {
 	c.Mapping("Post", c.Post)
@@ -31,6 +35,8 @@ func (c *WalkdataController) URLMapping() {
 // @Failure 403 body is empty
 // @router / [post]
 func (c *WalkdataController) Post() {
+	var data map[string]string
+	data["name"] = "dengtongtong"
 	var err error
 	var step, energy, distance, duration float64
 	var timestamp int64
@@ -55,7 +61,6 @@ func (c *WalkdataController) Post() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(aliuid, step, energy, distance, duration, timestamp)
 	var walkdata models.Walkdata
 	walkdata.Aliuid = aliuid
 	walkdata.Step = step
@@ -63,8 +68,8 @@ func (c *WalkdataController) Post() {
 	walkdata.Distance = distance
 	walkdata.Duration = duration
 	walkdata.Timestamp = timestamp
+	walkdata.Datestamp = 199000
 	_, err = models.AddWalkdata(&walkdata)
-	// fmt.Println("input request param", c.GetString("name"))
 	// data := map[string]string{"walkdata": "update"}
 	// c.Data["json"] = data
 	c.ServeJSON()
