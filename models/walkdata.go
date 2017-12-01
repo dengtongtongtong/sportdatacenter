@@ -134,14 +134,16 @@ func getWalkdataByUIdWithGeneralTS(aliuid string, datestamp int64) (v *Walkdata,
 // GetWalkdataById retrieves Walkdata by aliuid. Returns error if
 // Id doesn't exist
 func GetWalkdataByUId(aliuid string, datestamp int64) (v *Walkdata, err error) {
-	// o := orm.NewOrm()
-	// v = &Walkdata{Id: id}
-
-	// if err = o.QueryTable(new(Walkdata)).Filter("Id", id).RelatedSel().One(v); err == nil {
-	// 	return v, nil
-	// }
 	v, err = getWalkdataByUIdWithGeneralTS(aliuid, datestamp)
 	return v, err
+}
+
+func getBatchWalkdataByUId() {
+
+}
+
+func GetBatchWalkdataByUId(aliuid string, startdatestamp int64) (v []*Walkdata, err error) {
+	return nil, nil
 }
 
 // // GetAllWalkdata retrieves all Walkdata matches certain condition. Returns empty list if
