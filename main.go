@@ -2,28 +2,29 @@ package main
 
 import (
 	_ "sportdatacenter/routers"
+
+	"github.com/astaxie/beego"
 )
 
-func foo(data interface{}) (ret interface{}) {
-	var jsondata = map[string]interface{}{
-		"data":         data,
-		"errorMessage": "ok",
-	}
-	ret = jsondata
-	return ret
-}
-
 func main() {
-	// if beego.BConfig.RunMode == "dev" {
-	// 	beego.BConfig.WebConfig.DirectoryIndex = true
-	// 	beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
+	if beego.BConfig.RunMode == "dev" {
+		beego.BConfig.WebConfig.DirectoryIndex = true
+		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
+	}
+	beego.Run()
+	// type ColorGroup struct {
+	// 	ID     int
+	// 	Name   string
+	// 	Colors []string
 	// }
-	// beego.Run()
-	// data := map[string]string{"name": "deng"}
-	// fmt.Println(json.Decoder(data))
-	// data = make(map[string]interface{})
-	// ret := foo(data)
-	// ret := foo(data)
-	// var age int64
-	// fmt.Println(age.(type))
+	// group := ColorGroup{
+	// 	ID:     1,
+	// 	Name:   "Reds",
+	// 	Colors: []string{"Crimson", "Red", "Ruby", "Maroon"},
+	// }
+	// b, err := json.Marshal(group)
+	// if err != nil {
+	// 	fmt.Println("error:", err)
+	// }
+	// os.Stdout.Write(b)
 }

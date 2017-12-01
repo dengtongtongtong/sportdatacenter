@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"encoding/json"
 	"fmt"
+	"sportdatacenter/commonutils/webutils"
 	"sportdatacenter/models"
 	"strconv"
 
@@ -12,10 +12,6 @@ import (
 // WalkdataController operations for Walkdata
 type WalkdataController struct {
 	beego.Controller
-}
-
-func HttpSuccess(data *map[interface{}]interface{}) {
-	return
 }
 
 // URLMapping ...
@@ -35,8 +31,6 @@ func (c *WalkdataController) URLMapping() {
 // @Failure 403 body is empty
 // @router / [post]
 func (c *WalkdataController) Post() {
-	var data map[string]string
-	data["name"] = "dengtongtong"
 	var err error
 	var step, energy, distance, duration float64
 	var timestamp int64
@@ -70,8 +64,7 @@ func (c *WalkdataController) Post() {
 	walkdata.Timestamp = timestamp
 	walkdata.Datestamp = 199000
 	_, err = models.AddWalkdata(&walkdata)
-	// data := map[string]string{"walkdata": "update"}
-	// c.Data["json"] = data
+	c.Data["json"] = webutils.Success(nil)
 	c.ServeJSON()
 }
 
@@ -87,7 +80,8 @@ func (c *WalkdataController) GetOne() {
 	date, _ := strconv.ParseInt(c.GetString(":date"), 10, 64)
 	c.Data["json"] = map[string]string{"name": "dengtongtong"}
 	walkdata, _ := models.GetWalkdataByUId(uid, date)
-	c.Data["json"], _ = json.Marshal(walkdata)
+	fmt.Println("walkdata", walkdata.Step)
+	c.Data["json"] = webutils.Success(*walkdata)
 	c.ServeJSON()
 }
 

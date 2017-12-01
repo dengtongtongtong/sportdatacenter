@@ -13,14 +13,13 @@ import (
 )
 
 type Walkdata struct {
-	Id        int64  `orm:"auto"`
-	Aliuid    string `orm:"size(128)"`
-	Step      float64
-	Energy    float64
-	Distance  float64
-	Duration  float64
-	Timestamp int64
-	Datestamp int64
+	Aliuid    string  `orm:"size(128)" json:"aliuid"`
+	Step      float64 `json:"step"`
+	Energy    float64 `json:"energy"`
+	Distance  float64 `json:"distance"`
+	Duration  float64 `json:"duration"`
+	Timestamp int64   `json:"timestamp"`
+	Datestamp int64   `json:"datestamp"`
 }
 
 var (
@@ -62,12 +61,10 @@ func addWalkdataWithGeneralTS(m *Walkdata) (err error) {
 	getResp, _ := tsclient.GetRow(getRowRequest)
 	colmap := getResp.GetColumnMap()
 	if colmap != nil {
-		fmt.Println(colmap)
 		columstep, ok := colmap.Columns[COLSTEP]
 		if ok == true {
 			step, _ := columstep[0].Value.(float64)
 			if step >= m.Step {
-				fmt.Println("return cause step")
 				return nil
 			}
 		}
@@ -109,19 +106,29 @@ func getWalkdataByUIdWithGeneralTS(aliuid string, datestamp int64) (v *Walkdata,
 	getRowRequest.SingleRowQueryCriteria.TableName = walkDataTableName
 	getRowRequest.SingleRowQueryCriteria.MaxVersion = 1
 
-	getResp, _ := tsclient.GetRow(getRowRequest)
+	getResp, err := tsclient.GetRow(getRowRequest)
+	fmt.Println("getResp", getResp)
+
 	colmap := getResp.GetColumnMap()
-	step, _ := colmap.Columns[COLSTEP][0].Value.(float64)
-	energy, _ := colmap.Columns[COLENERGY][0].Value.(float64)
-	distance, _ := colmap.Columns[COLDISTANCE][0].Value.(float64)
-	duration, _ := colmap.Columns[COLDURATION][0].Value.(float64)
-	timestamp, _ := colmap.Columns[COLTIMESTAMP][0].Value.(int64)
-	v.Step = step
-	v.Energy = energy
-	v.Distance = distance
-	v.Duration = duration
-	v.Timestamp = timestamp
-	return v, nil
+	fmt.Println("colmap len", len(colmap.Columns))
+	wd := Walkdata{}
+	if len(colmap.Columns) > 0 {
+		step, _ := colmap.Columns[COLSTEP][0].Value.(float64)
+		energy, _ := colmap.Columns[COLENERGY][0].Value.(float64)
+		distance, _ := colmap.Columns[COLDISTANCE][0].Value.(float64)
+		duration, _ := colmap.Columns[COLDURATION][0].Value.(float64)
+		timestamp, _ := colmap.Columns[COLTIMESTAMP][0].Value.(int64)
+		wd.Aliuid = aliuid
+		wd.Step = step
+		wd.Energy = energy
+		wd.Distance = distance
+		wd.Duration = duration
+		wd.Timestamp = timestamp
+		v = &wd
+		return v, nil
+	} else {
+		return nil, nil
+	}
 }
 
 // GetWalkdataById retrieves Walkdata by aliuid. Returns error if
@@ -134,7 +141,7 @@ func GetWalkdataByUId(aliuid string, datestamp int64) (v *Walkdata, err error) {
 	// 	return v, nil
 	// }
 	v, err = getWalkdataByUIdWithGeneralTS(aliuid, datestamp)
-	return nil, err
+	return v, err
 }
 
 // // GetAllWalkdata retrieves all Walkdata matches certain condition. Returns empty list if
