@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"fmt"
-	"sportdatacenter/commonutils/webutils"
+	"gocommon/webutils"
 	"sportdatacenter/models"
 	"strconv"
 

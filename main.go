@@ -12,6 +12,12 @@ func main() {
 		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
 	}
 	beego.Run()
+
+	// query := webutils.Query{Method: "GET", Url: "https://httpbin.org/get", Data: map[string]string{"name": "dengtongtong"}, Headers: map[string]string{"agent": "fuck"}}
+	// feedback := webutils.CaptureSingle(query, 100*time.Second)
+	// fmt.Println(feedback.Error)
+	// fmt.Println(feedback.Message)
+
 	// type ColorGroup struct {
 	// 	ID     int
 	// 	Name   string
